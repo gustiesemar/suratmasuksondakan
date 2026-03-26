@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sistem Kelurahan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 flex items-center justify-center h-screen">
+    <div
+      class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 w-full max-w-sm"
+    >
+      <div class="text-center mb-6">
+        <div class="text-5xl mb-2">🏛️</div>
+        <h2 class="text-2xl font-bold text-slate-800">E-Surat Kelurahan</h2>
+        <p class="text-slate-500 text-sm">Silakan masuk untuk melanjutkan</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1"
+            >Masuk Sebagai:</label
+          >
+          <select
+            id="pilihanRole"
+            class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 bg-slate-50"
+          >
+            <option value="superadmin">👑 Super Admin (Lurah)</option>
+            <option value="admin">👤 Admin (Staff Input)</option>
+            <option value="viewer">👁️ Viewer (Hanya Pantau)</option>
+          </select>
+        </div>
+
+        <button
+          onclick="prosesLogin()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow transition"
+        >
+          Masuk ke Sistem ➡️
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function prosesLogin() {
+        const roleDipilih = document.getElementById("pilihanRole").value;
+
+        // Menyimpan "Tanda Pengenal" di dalam memori browser (Local Storage)
+        localStorage.setItem("hakAksesKelurahan", roleDipilih);
+
+        // Arahkan ke halaman yang sesuai dengan perannya
+        if (roleDipilih === "superadmin") {
+          window.location.href = "daftar-surat.html";
+        } else if (roleDipilih === "admin") {
+          window.location.href = "index.html";
+        } else {
+          window.location.href = "monitoring.html";
+        }
+      }
+    </script>
+  </body>
+</html>

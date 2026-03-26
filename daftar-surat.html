@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script>
+      const akses = localStorage.getItem("hakAksesKelurahan");
+      if (!akses) {
+        window.location.href = "login.html"; // Kalau belum login, lempar ke depan
+      } else if (akses !== "superadmin") {
+        alert("⛔ AKSES DITOLAK! Halaman ini khusus Super Admin (Lurah).");
+        window.location.href = "monitoring.html"; // Usir ke halaman monitoring
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Surat - Sistem Kelurahan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+    <nav
+      class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10"
+    >
+      <div class="text-lg md:text-xl font-bold flex items-center gap-2">
+        <span>🏛️</span> E-Surat Kelurahan
+      </div>
+      <div
+        class="text-xs md:text-sm bg-blue-800 px-3 py-1.5 rounded-full border border-blue-600"
+      >
+        👤 Mode: Admin
+      </div>
+    </nav>
+
+    <div class="flex flex-1 flex-col md:flex-row">
+      <aside
+        class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto"
+      >
+        <a
+          href="index.html"
+          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition"
+        >
+          📥 Input Surat Masuk
+        </a>
+        <a
+          href="#"
+          class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100 transition"
+        >
+          📂 Daftar Surat
+        </a>
+        <a
+          href="monitoring.html"
+          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition"
+        >
+          📊 Monitoring Arsip
+        </a>
+        <a
+          href="pengaturan.html"
+          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4"
+        >
+          ⚙️ Pengaturan Pejabat
+        </a>
+      </aside>
+
+      <main class="flex-1 p-4 md:p-8">
+        <div
+          class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200"
+        >
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b pb-4"
+          >
+            <div>
+              <h2 class="text-2xl font-bold text-slate-800 mb-1">
+                Daftar Surat Masuk
+              </h2>
+              <p class="text-slate-500 text-sm">
+                Semua data surat yang telah masuk ke Kelurahan.
+              </p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wide"
+                >
+                  <th
+                    class="p-4 rounded-tl-lg font-semibold border-b border-slate-200"
+                  >
+                    Tanggal
+                  </th>
+                  <th class="p-4 font-semibold border-b border-slate-200">
+                    Asal Surat
+                  </th>
+                  <th class="p-4 font-semibold border-b border-slate-200">
+                    Perihal
+                  </th>
+                  <th class="p-4 font-semibold border-b border-slate-200">
+                    Jenis
+                  </th>
+                  <th
+                    class="p-4 font-semibold border-b border-slate-200 text-center"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="p-4 rounded-tr-lg font-semibold border-b border-slate-200 text-center"
+                  >
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="tabelSurat" class="text-sm divide-y divide-slate-100">
+                <tr>
+                  <td colspan="6" class="p-4 text-center text-slate-500">
+                    ⏳ Sedang memuat data...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+      // 1. MASUKKAN URL DAN API KEY KAMU DI SINI
+      const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
+      const supabaseClient = window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey,
+      );
+
+      // --- FUNGSI BARU: Format Tanggal Indonesia ---
+      function formatTanggalIndo(tanggalString) {
+        if (!tanggalString) return "-";
+        const date = new Date(tanggalString);
+        // Pilihan format: menampilkan tanggal angka, bulan tulisan (long), tahun angka
+        const options = { day: "numeric", month: "long", year: "numeric" };
+        return date.toLocaleDateString("id-ID", options);
+      }
+      // ---------------------------------------------
+
+      async function loadDataSurat() {
+        const wadahTabel = document.getElementById("tabelSurat");
+        try {
+          const { data: dataSurat, error: errSurat } = await supabaseClient
+            .from("surat")
+            .select("*")
+            .order("id", { ascending: false });
+
+          if (errSurat) throw errSurat;
+
+          const { data: dataDisposisi, error: errDisp } = await supabaseClient
+            .from("disposisi")
+            .select("surat_id");
+
+          if (errDisp) throw errDisp;
+
+          wadahTabel.innerHTML = "";
+
+          if (dataSurat.length === 0) {
+            wadahTabel.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada surat yang diinput.</td></tr>`;
+            return;
+          }
+
+          dataSurat.forEach((surat) => {
+            let badgeJenis =
+              surat.jenis_surat === "undangan"
+                ? `<span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold border border-amber-200">Undangan</span>`
+                : `<span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold border border-slate-200">Biasa</span>`;
+
+            const sudahDisposisi = dataDisposisi.some(
+              (disp) => disp.surat_id === surat.id,
+            );
+
+            let badgeStatus = "";
+            let tombolMata = "";
+
+            if (sudahDisposisi) {
+              badgeStatus = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">✅ Selesai</span>`;
+              tombolMata = `<a href="monitoring.html" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-3 py-1.5 rounded-md font-medium text-xs transition" title="Sudah didisposisi. Lihat di Monitoring">✅ Lihat Arsip</a>`;
+            } else {
+              badgeStatus = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">⏳ Belum</span>`;
+              tombolMata = `<a href="disposisi.html?id=${surat.id}" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-md font-medium text-xs transition" title="Lakukan Disposisi">👁️ Disposisi</a>`;
+            }
+
+            // Menerapkan formatTanggalIndo() pada surat.tgl_masuk
+            const tanggalCantik = formatTanggalIndo(surat.tgl_masuk);
+
+            const barisHTML = `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4 text-slate-700 font-medium whitespace-nowrap">${tanggalCantik}</td>
+                            
+                            <td class="p-4 font-medium text-slate-800">${surat.asal_surat}</td>
+                            <td class="p-4 text-slate-600">${surat.perihal}</td>
+                            
+                            <td class="p-4 whitespace-nowrap">${badgeJenis}</td>
+                            <td class="p-4 text-center whitespace-nowrap">${badgeStatus}</td>
+                            <td class="p-4 text-center whitespace-nowrap">
+                                <div class="flex justify-center gap-2">
+                                    ${tombolMata}
+                                    <a href="edit-surat.html?id=${surat.id}" class="bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-1.5 rounded-md font-medium text-xs transition" title="Edit Surat">✏️</a>
+                                    <button onclick="hapusSurat(${surat.id})" class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1.5 rounded-md font-medium text-xs transition" title="Hapus Surat">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+            wadahTabel.innerHTML += barisHTML;
+          });
+        } catch (err) {
+          wadahTabel.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
+        }
+      }
+
+      async function hapusSurat(idSurat) {
+        const yakin = confirm(
+          "Yakin ingin menghapus surat ini? Data yang dihapus tidak bisa dikembalikan.",
+        );
+        if (!yakin) return;
+
+        try {
+          const { error } = await supabaseClient
+            .from("surat")
+            .delete()
+            .eq("id", idSurat);
+
+          if (error) throw error;
+
+          alert("Surat berhasil dihapus! 🗑️");
+          loadDataSurat();
+        } catch (err) {
+          console.error("Gagal menghapus:", err);
+          alert(
+            "Gagal menghapus surat! (Catatan: Surat yang sudah didisposisikan tidak bisa dihapus demi keamanan arsip).",
+          );
+        }
+      }
+
+      window.onload = loadDataSurat;
+    </script>
+  </body>
+</html>
