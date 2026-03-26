@@ -260,11 +260,11 @@
                     // SEKARANG MENGAMBIL WA DARI DATABASE
                     const infoPejabat = databasePejabat[cb.value]; 
                     
-                    let teksPesan = `*DISPOSISI SURAT BARU*  Halo ${infoPejabat.nama}, ada instruksi disposisi baru dari Bapak Lurah.`;
-                    teksPesan += ` *Asal Surat:  * ${dataSuratGlobal.asal_surat}`;
-                    teksPesan += ` *Perihal: * ${dataSuratGlobal.perihal}`;
-                    if (dataSuratGlobal.link_gdrive) teksPesan += `*Link File:* ${dataSuratGlobal.link_gdrive}\\n`;
-                    teksPesan += ` *disposisi Lurah: *_"${isi}"_  Mohon segera ditindaklanjuti.`;
+                    let teksPesan = `*DISPOSISI SURAT BARU*  Yth ${infoPejabat.nama}, ada disposisi baru dari Bapak Lurah.`;
+                    teksPesan += ` *Asal Surat: *${dataSuratGlobal.asal_surat}`;
+                    teksPesan += `* Perihal:  ${dataSuratGlobal.perihal}`;
+                    if (dataSuratGlobal.link_gdrive) teksPesan += ` Link File:  ${dataSuratGlobal.link_gdrive}`;
+                    teksPesan += ` disposisi Lurah: _"${isi}"_  Mohon segera ditindaklanjuti.`;
 
                     const urlWA = `https://wa.me/${infoPejabat.wa}?text=${encodeURIComponent(teksPesan)}`;
                     htmlTombolWA += `<a href="${urlWA}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center shadow-md">Kirim WA ke ${infoPejabat.nama}</a>`;
