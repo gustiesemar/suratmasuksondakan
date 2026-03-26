@@ -46,34 +46,23 @@
     </nav>
 
     <div class="flex flex-1 flex-col md:flex-row">
-      <aside
-        class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto"
-      >
-        <a
-          href="#"
-          class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100"
-        >
-          📥 Input Surat Masuk
-        </a>
-        <a
-          href="daftar-surat.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap"
-        >
-          📂 Daftar Surat
-        </a>
-        <a
-          href="monitoring.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition"
-        >
-          📊 Monitoring Arsip
-        </a>
-        <a
-          href="pengaturan.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4"
-        >
-          ⚙️ Pengaturan Pejabat
-        </a>
-      </aside>
+      <aside class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
+    <a href="index.html" class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100 transition">
+        📥 Input Surat Masuk
+    </a>
+    
+    <a href="daftar-surat.html" id="menuDaftar" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
+        📂 Daftar Surat
+    </a>
+    
+    <a href="monitoring.html" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
+        📊 Monitoring Arsip
+    </a>
+    
+    <a href="pengaturan.html" id="menuPengaturan" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4">
+        ⚙️ Pengaturan Pejabat
+    </a>
+</aside>
 
       <main class="flex-1 p-4 md:p-8">
         <div
@@ -302,6 +291,18 @@
         // 2. Lemparkan pengguna kembali ke halaman Login
         window.location.href = "login.html";
       }
-    </script>
+   
+    // --- FITUR KEAMANAN MENU INDEX ---
+    const peran = localStorage.getItem('hakAksesKelurahan');
+
+    if (peran === 'admin') {
+        // Sembunyikan menu yang tidak boleh diakses admin
+        const mDaftar = document.getElementById('menuDaftar');
+        const mPengaturan = document.getElementById('menuPengaturan');
+        
+        if (mDaftar) mDaftar.style.display = 'none';
+        if (mPengaturan) mPengaturan.style.display = 'none';
+    }
+</script>
   </body>
 </html>

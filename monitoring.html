@@ -92,15 +92,26 @@
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // FITUR KEAMANAN: Cek Login & Sembunyikan Menu Viewer
+        // --- UPDATE FITUR KEAMANAN: Batasan Menu untuk Admin & Viewer ---
         const peranPengguna = localStorage.getItem('hakAksesKelurahan');
+        
+        // 1. Cek Login
         if (!peranPengguna) { window.location.href = 'login.html'; }
-        if (peranPengguna === 'viewer') {
+
+        // 2. Aturan Sembunyikan Menu
+        if (peranPengguna === 'admin') {
+            // Admin hanya boleh Input & Monitoring. Sembunyikan Daftar Surat & Pengaturan.
+            document.getElementById('menuDaftar').style.display = 'none';
+            document.getElementById('menuPengaturan').style.display = 'none';
+        } 
+        else if (peranPengguna === 'viewer') {
+            // Viewer hanya boleh Monitoring. Sembunyikan Input, Daftar Surat, & Pengaturan.
             document.getElementById('menuInput').style.display = 'none';
             document.getElementById('menuDaftar').style.display = 'none';
             document.getElementById('menuPengaturan').style.display = 'none';
         }
-
+        // Jika superadmin, semua menu tetap tampil (tidak masuk kondisi if di atas)
+        // -----------------------------------------------------------------
         function keluarSistem() {
             localStorage.removeItem('hakAksesKelurahan');
             window.location.href = 'login.html';
