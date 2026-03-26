@@ -27,6 +27,15 @@
       >
         ⚙️ Mode: Pengaturan Sistem
       </div>
+      <div class="flex items-center gap-3">
+            <div class="text-xs md:text-sm bg-blue-800 px-3 py-1.5 rounded-full border border-blue-600 hidden md:block">
+                Sistem Aktif
+            </div>
+            
+            <button onclick="keluarSistem()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full font-bold shadow-md transition">
+                Keluar 🚪
+            </button>
+        </div>
     </nav>
 
     <div class="flex flex-1 flex-col md:flex-row">
@@ -250,6 +259,12 @@
         });
 
       window.onload = loadPejabat;
+    </script>
+    <script>
+        function keluarSistem() {
+            localStorage.removeItem('hakAksesKelurahan');
+            window.location.href = 'login.html';
+        }
     </script>
   </body>
 </html>

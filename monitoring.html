@@ -1,223 +1,268 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <script>
-      if (!localStorage.getItem("hakAksesKelurahan")) {
-        window.location.href = "login.html";
-      }
-    </script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Disposisi - Sistem Kelurahan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-    </style>
-  </head>
-  <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
-    <nav
-      class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10"
-    >
-      <div class="text-lg md:text-xl font-bold flex items-center gap-2">
-        <span>🏛️</span> E-Surat Kelurahan
-      </div>
-      <div
-        class="text-xs md:text-sm bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full border border-indigo-400"
-      >
-        👁️ Mode: Viewer / Monitoring
-      </div>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <nav class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
+        <div class="text-lg md:text-xl font-bold flex items-center gap-2">
+            <span>🏛️</span> E-Surat Kelurahan
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="text-xs md:text-sm bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full border border-indigo-400 hidden md:block">
+                👁️ Mode: Viewer / Monitoring
+            </div>
+            <button onclick="keluarSistem()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full font-bold shadow-md transition">
+                Keluar 🚪
+            </button>
+        </div>
     </nav>
 
     <div class="flex flex-1 flex-col md:flex-row">
-      <aside
-        class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto"
-      >
-        <a
-          href="index.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition"
-        >
-          📥 Input Surat Masuk
-        </a>
-        <a
-          href="daftar-surat.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition"
-        >
-          📂 Daftar Surat
-        </a>
-        <a
-          href="#"
-          class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100 transition"
-        >
-          📊 Monitoring Arsip
-        </a>
-        <a
-          href="pengaturan.html"
-          class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4"
-        >
-          ⚙️ Pengaturan Pejabat
-        </a>
-      </aside>
+        
+        <aside class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
+            <a href="index.html" id="menuInput" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
+                📥 Input Surat Masuk
+            </a>
+            <a href="daftar-surat.html" id="menuDaftar" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
+                📂 Daftar Surat
+            </a>
+            <a href="#" class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100 transition">
+                📊 Monitoring Arsip
+            </a>
+            <a href="pengaturan.html" id="menuPengaturan" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4">
+                ⚙️ Pengaturan Pejabat
+            </a>
+        </aside>
 
-      <main class="flex-1 p-4 md:p-8">
-        <div
-          class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200"
-        >
-          <div class="flex justify-between items-center mb-6 border-b pb-4">
-            <div>
-              <h2 class="text-2xl font-bold text-slate-800 mb-1">
-                Arsip & Monitoring Disposisi
-              </h2>
-              <p class="text-slate-500 text-sm">
-                Pantau status tindak lanjut seluruh surat masuk.
-              </p>
+        <main class="flex-1 p-4 md:p-8">
+            <div class="max-w-6xl mx-auto">
+                
+                <div class="bg-blue-50 border border-blue-200 p-5 rounded-xl shadow-sm mb-6">
+                    <h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2 text-lg">
+                        <span>📅</span> Agenda Rapat (Hingga 3 Hari Kedepan)
+                    </h3>
+                    <div id="wadahAgenda" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="text-sm text-blue-600 italic">⏳ Mengecek jadwal...</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800 mb-1">Arsip & Monitoring Disposisi</h2>
+                            <p class="text-slate-500 text-sm">Pantau status tindak lanjut seluruh surat masuk.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wide">
+                                    <th class="p-4 rounded-tl-lg font-semibold border-b border-slate-200 whitespace-nowrap">Surat Masuk</th>
+                                    <th class="p-4 font-semibold border-b border-slate-200 whitespace-nowrap">Status Disposisi</th>
+                                    <th class="p-4 rounded-tr-lg font-semibold border-b border-slate-200">Instruksi / Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelMonitoring" class="text-sm divide-y divide-slate-100">
+                                <tr><td colspan="3" class="p-4 text-center text-slate-500">⏳ Mengambil data arsip...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr
-                  class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wide"
-                >
-                  <th
-                    class="p-4 rounded-tl-lg font-semibold border-b border-slate-200"
-                  >
-                    Surat Masuk
-                  </th>
-                  <th class="p-4 font-semibold border-b border-slate-200">
-                    Status Disposisi
-                  </th>
-                  <th
-                    class="p-4 rounded-tr-lg font-semibold border-b border-slate-200"
-                  >
-                    Instruksi / Catatan
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                id="tabelMonitoring"
-                class="text-sm divide-y divide-slate-100"
-              >
-                <tr>
-                  <td colspan="3" class="p-4 text-center text-slate-500">
-                    ⏳ Mengambil data arsip...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-      // MASUKKAN URL DAN API KEY KAMU DI SINI
-      const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
+        // MASUKKAN URL DAN API KEY KAMU DI SINI
+     const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      const supabaseClient = window.supabase.createClient(
-        supabaseUrl,
-        supabaseKey,
-      );
+        // FITUR KEAMANAN: Cek Login & Sembunyikan Menu Viewer
+        const peranPengguna = localStorage.getItem('hakAksesKelurahan');
+        if (!peranPengguna) { window.location.href = 'login.html'; }
+        if (peranPengguna === 'viewer') {
+            document.getElementById('menuInput').style.display = 'none';
+            document.getElementById('menuDaftar').style.display = 'none';
+            document.getElementById('menuPengaturan').style.display = 'none';
+        }
 
-      const namaPejabat = {
-        2: "Sekretaris Kelurahan",
-        3: "Kasi P3K2",
-        4: "Kasi Pembangunan",
-        5: "Kasi Pemberdayaan Masyarakat",
-      };
+        function keluarSistem() {
+            localStorage.removeItem('hakAksesKelurahan');
+            window.location.href = 'login.html';
+        }
 
-      // --- FUNGSI FORMAT TANGGAL ---
-      function formatTanggalIndo(tanggalString) {
-        if (!tanggalString) return "-";
-        const date = new Date(tanggalString);
-        const options = { day: "numeric", month: "long", year: "numeric" };
-        return date.toLocaleDateString("id-ID", options);
-      }
+        const namaPejabat = {
+            "2": "Sekretaris Kelurahan",
+            "3": "Kasi P3K2",
+            "4": "Kasi Pembangunan",
+            "5": "Kasi Pemberdayaan Masyarakat"
+        };
 
-      async function loadDataMonitoring() {
-        const wadahTabel = document.getElementById("tabelMonitoring");
+        function formatTanggalIndo(tanggalString) {
+            if (!tanggalString) return '-';
+            const date = new Date(tanggalString);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
 
-        try {
-          const { data: dataSurat, error: errSurat } = await supabaseClient
-            .from("surat")
-            .select("*")
-            .order("id", { ascending: false });
+        // Fungsi bantuan untuk mendapatkan format YYYY-MM-DD dari tanggal
+        function dapatkanStringTanggal(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
 
-          if (errSurat) throw errSurat;
+        async function loadDataMonitoring() {
+            const wadahTabel = document.getElementById('tabelMonitoring');
+            const wadahAgenda = document.getElementById('wadahAgenda');
 
-          const { data: dataDisposisi, error: errDisp } = await supabaseClient
-            .from("disposisi")
-            .select("*");
+            try {
+                const { data: dataSurat, error: errSurat } = await supabaseClient
+                    .from('surat')
+                    .select('*')
+                    .order('id', { ascending: false });
+                if (errSurat) throw errSurat;
 
-          if (errDisp) throw errDisp;
+                const { data: dataDisposisi, error: errDisp } = await supabaseClient
+                    .from('disposisi')
+                    .select('*');
+                if (errDisp) throw errDisp;
 
-          wadahTabel.innerHTML = "";
+                wadahTabel.innerHTML = '';
+                wadahAgenda.innerHTML = '';
 
-          if (dataSurat.length === 0) {
-            wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500">Belum ada data surat.</td></tr>`;
-            return;
-          }
+                if (dataSurat.length === 0) {
+                    wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500">Belum ada data surat.</td></tr>`;
+                    wadahAgenda.innerHTML = `<p class="text-sm text-slate-500">Belum ada jadwal rapat.</p>`;
+                    return;
+                }
 
-          dataSurat.forEach((surat) => {
-            const hasilDisposisi = dataDisposisi.filter(
-              (disp) => disp.surat_id === surat.id,
-            );
-            let statusHTML = "";
-            let instruksiHTML = "";
+                // ----------------------------------------------------
+                // LOGIKA AGENDA 3 HARI KEDEPAN
+                // ----------------------------------------------------
+                const hariIni = new Date();
+                const strHariIni = dapatkanStringTanggal(hariIni); // Cth: 2026-03-26
 
-            if (hasilDisposisi.length === 0) {
-              statusHTML = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">⏳ Belum Diproses</span>`;
-              instruksiHTML = `<span class="text-slate-400 italic">Menunggu tindakan Lurah...</span>`;
-            } else {
-              statusHTML = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 mb-2 inline-block">✅ Sudah Disposisi</span>`;
-              let daftarPejabat = hasilDisposisi
-                .map(
-                  (disp) =>
-                    `<li>• ${namaPejabat[disp.pejabat_id] || "Pejabat"}</li>`,
-                )
-                .join("");
-              statusHTML += `<ul class="text-slate-600 mt-1">${daftarPejabat}</ul>`;
-              instruksiHTML = `<p class="text-slate-700 font-medium">"${hasilDisposisi[0].isi_disposisi}"</p>`;
-            }
+                const tigaHariLagi = new Date();
+                tigaHariLagi.setDate(hariIni.getDate() + 3);
+                const strTigaHariLagi = dapatkanStringTanggal(tigaHariLagi);
 
-            let linkFile = "";
-            if (surat.link_gdrive) {
-              linkFile = `<br><a href="${surat.link_gdrive}" target="_blank" class="text-blue-600 hover:underline text-xs mt-1 inline-block">📄 Lihat Surat</a>`;
-            }
+                // Filter surat undangan yang tanggal rapatnya masuk dalam rentang hari ini s/d 3 hari ke depan
+                let daftarAgenda = dataSurat.filter(surat => {
+                    if (surat.jenis_surat !== 'undangan' || !surat.tgl_rapat) return false;
+                    return surat.tgl_rapat >= strHariIni && surat.tgl_rapat <= strTigaHariLagi;
+                });
 
-            // Terapkan format tanggal di sini
-            const tglMasukCantik = formatTanggalIndo(surat.tgl_masuk);
+                // Urutkan agenda berdasarkan tanggal yang paling dekat
+                daftarAgenda.sort((a, b) => a.tgl_rapat.localeCompare(b.tgl_rapat));
 
-            const barisHTML = `
+                if (daftarAgenda.length === 0) {
+                    wadahAgenda.innerHTML = `<p class="text-sm text-blue-600 col-span-3">✨ Tidak ada jadwal rapat untuk 3 hari ke depan.</p>`;
+                } else {
+                    daftarAgenda.forEach(agenda => {
+                        // 1. Cari data disposisi khusus untuk agenda ini
+                        const hasilDisposisi = dataDisposisi.filter(d => d.surat_id === agenda.id);
+                        
+                        let statusDisp = '';
+                        let infoDisposisi = '';
+
+                        // 2. Jika BELUM didisposisikan
+                        if (hasilDisposisi.length === 0) {
+                            statusDisp = `<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold">⏳ Belum disposisi</span>`;
+                            infoDisposisi = `<p class="text-xs text-slate-400 italic mt-2 pt-2 border-t border-blue-100">Menunggu tindakan Lurah...</p>`;
+                        } 
+                        // 3. Jika SUDAH didisposisikan
+                        else {
+                            statusDisp = `<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">✅ Sudah disposisi</span>`;
+                            
+                            // Mengambil nama-nama pejabat dan menggabungkannya dengan koma
+                            let daftarPejabat = hasilDisposisi.map(disp => namaPejabat[disp.pejabat_id] || 'Pejabat').join(', ');
+                            let instruksi = hasilDisposisi[0].isi_disposisi;
+
+                            infoDisposisi = `
+                                <div class="mt-2 pt-2 border-t border-blue-100 bg-blue-50/50 p-2 rounded">
+                                    <p class="text-xs text-slate-700 mb-1"><span class="font-bold">Diteruskan ke:</span> <br>${daftarPejabat}</p>
+                                    <p class="text-xs text-slate-700"><span class="font-bold">Instruksi:</span> <br>"${instruksi}"</p>
+                                </div>
+                            `;
+                        }
+
+                        // 4. Cetak Kartu Agenda ke Layar
+                        wadahAgenda.innerHTML += `
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-200 hover:shadow-md transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <p class="text-xs font-bold text-blue-600">${formatTanggalIndo(agenda.tgl_rapat)} • ${agenda.jam_rapat || '-'}</p>
+                                        ${statusDisp}
+                                    </div>
+                                    <p class="font-bold text-slate-800 text-sm mb-1 leading-tight line-clamp-2" title="${agenda.perihal}">${agenda.perihal}</p>
+                                    <p class="text-xs text-slate-500 mb-2">📍 ${agenda.tempat_rapat || 'Tempat tidak dirinci'}</p>
+                                </div>
+                                ${infoDisposisi}
+                            </div>
+                        `;
+                    });
+                }
+                // ----------------------------------------------------
+
+
+                // (Sisa logika tabel arsip tetap sama)
+                dataSurat.forEach((surat) => {
+                    const hasilDisposisi = dataDisposisi.filter(disp => disp.surat_id === surat.id);
+                    let statusHTML = '';
+                    let instruksiHTML = '';
+
+                    if (hasilDisposisi.length === 0) {
+                        statusHTML = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">⏳ Belum Diproses</span>`;
+                        instruksiHTML = `<span class="text-slate-400 italic">Menunggu tindakan Lurah...</span>`;
+                    } else {
+                        statusHTML = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 mb-2 inline-block">✅ Sudah Disposisi</span>`;
+                        let daftarPejabat = hasilDisposisi.map(disp => `<li>• ${namaPejabat[disp.pejabat_id] || 'Pejabat'}</li>`).join('');
+                        statusHTML += `<ul class="text-slate-600 mt-1">${daftarPejabat}</ul>`;
+                        instruksiHTML = `<p class="text-slate-700 font-medium">"${hasilDisposisi[0].isi_disposisi}"</p>`;
+                    }
+
+                    let linkFile = '';
+                    if (surat.link_gdrive) {
+                        linkFile = `<br><a href="${surat.link_gdrive}" target="_blank" class="text-blue-600 hover:underline text-xs mt-1 inline-block font-semibold">📄 Lihat Surat</a>`;
+                    }
+
+                    const tglMasukCantik = formatTanggalIndo(surat.tgl_masuk);
+
+                    const barisHTML = `
                         <tr class="hover:bg-slate-50 transition align-top">
                             <td class="p-4">
                                 <p class="font-bold text-slate-800">${surat.asal_surat}</p>
                                 <p class="text-slate-500 text-xs mb-1">${tglMasukCantik}</p>
-                                <p class="text-slate-600 text-sm max-w-xs truncate" title="${surat.perihal}">${surat.perihal}</p>
+                                <p class="text-slate-600 text-sm mt-2">${surat.perihal}</p>
                                 ${linkFile}
                             </td>
-                            <td class="p-4">${statusHTML}</td>
+                            <td class="p-4 whitespace-nowrap">${statusHTML}</td>
                             <td class="p-4 bg-slate-50/50">${instruksiHTML}</td>
                         </tr>
                     `;
-            wadahTabel.innerHTML += barisHTML;
-          });
-        } catch (err) {
-          wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
-        }
-      }
+                    wadahTabel.innerHTML += barisHTML;
+                });
 
-      window.onload = loadDataMonitoring;
+            } catch (err) {
+                wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
+                wadahAgenda.innerHTML = `<p class="text-sm text-red-500">Gagal memuat jadwal.</p>`;
+            }
+        }
+
+        window.onload = loadDataMonitoring;
     </script>
-  </body>
+</body>
 </html>
