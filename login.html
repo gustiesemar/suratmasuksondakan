@@ -3,25 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Kelurahan</title>
+    <title>Login - E-DISON Sondakan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style> 
+        body { 
+            font-family: 'Inter', sans-serif; 
+            /* Mengatur gambar background agar memenuhi layar */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('letters_background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        } 
+        /* Efek kaca transparan untuk kotak login */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
-<body class="bg-slate-100 flex items-center justify-center h-screen">
+<body class="flex items-center justify-center h-screen p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 w-full max-w-sm">
+    <div class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-sm">
         <div class="text-center mb-6 flex flex-col items-center">
-            <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-24 w-24 rounded-full border-4 border-slate-200 mb-3 object-cover shadow-inner">
-            <h1 class="text-2xl font-bold text-slate-800">E-DISON</h1>
-             <h3 class="block text-sm font-semibold text-slate-700 mb-1">E-DISPOSISI KELURAHAN SONDAKAN</h3>
-            <p class="text-slate-500 text-sm">Silakan login untuk melanjutkan</p>
+            <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-24 w-24 rounded-full border-4 border-white mb-3 object-cover shadow-lg">
+            
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">E-DISON</h1>
+            <h3 class="text-[10px] font-bold text-blue-700 tracking-widest uppercase mt-1">E-Disposisi Kelurahan Sondakan</h3>
+            <div class="h-1 w-12 bg-blue-600 rounded-full my-3"></div>
+            <p class="text-slate-500 text-xs">Silakan login untuk mengakses sistem</p>
         </div>
 
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Masuk Sebagai:</label>
-                <select id="pilihanRole" onchange="aturKotakPassword()" class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                <label class="block text-xs font-bold text-slate-700 mb-1 uppercase ml-1">Masuk Sebagai:</label>
+                <select id="pilihanRole" onchange="aturKotakPassword()" class="w-full border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white/50 outline-none transition-all">
                     <option value="viewer">👁️ Viewer (Hanya Pantau)</option>
                     <option value="admin">👤 Admin (Staff Input)</option>
                     <option value="superadmin">👑 Super Admin (Lurah)</option>
@@ -29,50 +46,75 @@
             </div>
 
             <div id="wadahPassword">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Password:</label>
-                <input type="password" id="inputPassword" placeholder="Masukkan password rahasia..." class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                <label class="block text-xs font-bold text-slate-700 mb-1 uppercase ml-1">Password:</label>
+                <input type="password" id="inputPassword" placeholder="••••••••" class="w-full border border-slate-200 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white/50 outline-none transition-all">
             </div>
 
-            <button onclick="prosesLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow transition mt-2">
-                Masuk ke Sistem ➡️
+            <button onclick="prosesLogin()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all mt-4 flex justify-center items-center gap-2">
+                Masuk Ke Sistem 
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
             </button>
         </div>
+        
+        <p class="text-center text-[10px] text-slate-400 mt-8 uppercase tracking-widest">
+            &copy; 2024 Kelurahan Sondakan
+        </p>
     </div>
 
     <script>
+        // Fungsi untuk menyembunyikan/menampilkan kolom password
         function aturKotakPassword() {
             const roleDipilih = document.getElementById('pilihanRole').value;
             const wadahPassword = document.getElementById('wadahPassword');
-            if (roleDipilih === 'viewer') { wadahPassword.style.display = 'none'; } 
-            else { wadahPassword.style.display = 'block'; }
+            // Jika role adalah viewer, password disembunyikan
+            if (roleDipilih === 'viewer') { 
+                wadahPassword.style.display = 'none'; 
+            } else { 
+                wadahPassword.style.display = 'block'; 
+            }
         }
 
+        // Fungsi utama proses login
         function prosesLogin() {
             const roleDipilih = document.getElementById('pilihanRole').value;
             const passwordDiketik = document.getElementById('inputPassword').value;
 
+            // Jika memilih viewer, langsung diarahkan ke halaman monitoring
             if (roleDipilih === 'viewer') {
                 localStorage.setItem('hakAksesKelurahan', roleDipilih);
                 window.location.href = 'monitoring.html';
                 return;
             }
 
+            // Daftar password untuk masing-masing role
             const passwordBenar = {
                 "superadmin": "lurah123",
                 "admin": "admin123"
             };
 
-            if (passwordDiketik === "") { alert("⚠️ Password tidak boleh kosong!"); return; }
+            if (passwordDiketik === "") { 
+                alert("⚠️ Password tidak boleh kosong!"); 
+                return; 
+            }
 
+            // Verifikasi password
             if (passwordDiketik === passwordBenar[roleDipilih]) {
                 localStorage.setItem('hakAksesKelurahan', roleDipilih);
-                if (roleDipilih === 'superadmin') { window.location.href = 'daftar-surat.html'; } 
-                else if (roleDipilih === 'admin') { window.location.href = 'index.html'; }
+                // Redirect sesuai hak akses
+                if (roleDipilih === 'superadmin') { 
+                    window.location.href = 'daftar-surat.html'; 
+                } else if (roleDipilih === 'admin') { 
+                    window.location.href = 'index.html'; 
+                }
             } else {
                 alert("❌ LOGIN GAGAL! Password yang Anda masukkan salah.");
                 document.getElementById('inputPassword').value = '';
             }
         }
+
+        // Jalankan pengecekan kotak password saat pertama kali halaman dimuat
         window.onload = aturKotakPassword;
     </script>
 </body>
