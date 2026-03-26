@@ -14,7 +14,7 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Surat Kelurahan</title>
+    <title>E-DISON</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
@@ -27,27 +27,22 @@
     </style>
   </head>
   <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
-    <nav
-      class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10"
-    >
-      <div class="text-lg md:text-xl font-bold flex items-center gap-2">
-        <span>🏛️</span> E-Surat Kelurahan
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div
-          class="text-xs md:text-sm bg-blue-800 px-3 py-1.5 rounded-full border border-blue-600 hidden md:block"
-        >
-          👤 Mode: Admin
+   <nav class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+            <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-10 w-10 rounded-full border border-white/50 object-cover shadow-inner">
+            <div class="text-lg md:text-xl font-bold text-white">
+                E-Surat Kelurahan
+            </div>
         </div>
-
-        <button
-          onclick="keluarSistem()"
-          class="text-xs md:text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full font-bold shadow-md transition"
-        >
-          Keluar 🚪
-        </button>
-      </div>
+        
+        <div class="flex items-center gap-3">
+            <div class="text-xs md:text-sm bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full border border-indigo-400 hidden md:block">
+                👁️ Mode: Viewer / Monitoring
+            </div>
+            <button onclick="keluarSistem()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full font-bold shadow-md transition">
+                Keluar 🚪
+            </button>
+        </div>
     </nav>
 
     <div class="flex flex-1 flex-col md:flex-row">

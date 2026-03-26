@@ -11,8 +11,8 @@
 <body class="bg-slate-100 flex items-center justify-center h-screen">
 
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 w-full max-w-sm">
-        <div class="text-center mb-6">
-            <div class="text-5xl mb-2">🏛️</div>
+        <div class="text-center mb-6 flex flex-col items-center">
+            <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-24 w-24 rounded-full border-4 border-slate-200 mb-3 object-cover shadow-inner">
             <h2 class="text-2xl font-bold text-slate-800">E-Surat Kelurahan</h2>
             <p class="text-slate-500 text-sm">Silakan login untuk melanjutkan</p>
         </div>
@@ -23,7 +23,7 @@
                 <select id="pilihanRole" onchange="aturKotakPassword()" class="w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 bg-slate-50">
                     <option value="viewer">👁️ Viewer (Hanya Pantau)</option>
                     <option value="admin">👤 Admin (Staff Input)</option>
-                     <option value="superadmin">👑 Super Admin (Lurah)</option>                   
+                    <option value="superadmin">👑 Super Admin (Lurah)</option>
                 </select>
             </div>
 
@@ -39,56 +39,39 @@
     </div>
 
     <script>
-        // Fungsi untuk menyembunyikan/menampilkan kotak password
         function aturKotakPassword() {
             const roleDipilih = document.getElementById('pilihanRole').value;
             const wadahPassword = document.getElementById('wadahPassword');
-            
-            if (roleDipilih === 'viewer') {
-                wadahPassword.style.display = 'none'; // Sembunyikan jika Viewer
-            } else {
-                wadahPassword.style.display = 'block'; // Tampilkan jika Admin/Lurah
-            }
+            if (roleDipilih === 'viewer') { wadahPassword.style.display = 'none'; } 
+            else { wadahPassword.style.display = 'block'; }
         }
 
         function prosesLogin() {
             const roleDipilih = document.getElementById('pilihanRole').value;
             const passwordDiketik = document.getElementById('inputPassword').value;
 
-            // Jika memilih VIEWER, langsung masuk tanpa perlu cek password!
             if (roleDipilih === 'viewer') {
                 localStorage.setItem('hakAksesKelurahan', roleDipilih);
                 window.location.href = 'monitoring.html';
-                return; // Hentikan kode di sini agar tidak mengecek password di bawah
+                return;
             }
 
-            // --- Bagian di bawah ini KHUSUS Admin & Super Admin ---
             const passwordBenar = {
                 "superadmin": "lurah123",
                 "admin": "admin123"
             };
 
-            if (passwordDiketik === "") {
-                alert("⚠️ Password tidak boleh kosong!");
-                return;
-            }
+            if (passwordDiketik === "") { alert("⚠️ Password tidak boleh kosong!"); return; }
 
             if (passwordDiketik === passwordBenar[roleDipilih]) {
                 localStorage.setItem('hakAksesKelurahan', roleDipilih);
-                
-                if (roleDipilih === 'superadmin') {
-                    window.location.href = 'daftar-surat.html';
-                } else if (roleDipilih === 'admin') {
-                    window.location.href = 'index.html';
-                }
+                if (roleDipilih === 'superadmin') { window.location.href = 'daftar-surat.html'; } 
+                else if (roleDipilih === 'admin') { window.location.href = 'index.html'; }
             } else {
                 alert("❌ LOGIN GAGAL! Password yang Anda masukkan salah.");
                 document.getElementById('inputPassword').value = '';
             }
         }
-
-        // Jalankan fungsi ini sekali saat halaman pertama kali dibuka
-        // agar tampilan menyesuaikan dengan pilihan yang aktif.
         window.onload = aturKotakPassword;
     </script>
 </body>
