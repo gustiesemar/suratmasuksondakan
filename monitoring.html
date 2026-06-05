@@ -57,13 +57,10 @@
                 </div>
 
                 <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 gap-4">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800 mb-1">Arsip & Monitoring Disposisi</h2>
                             <p class="text-slate-500 text-sm">Pantau status tindak lanjut seluruh surat masuk.</p>
-                        </div>
-                        <div class="w-full md:w-auto">
-                            <input type="text" id="inputPencarian" placeholder="Cari pejabat, kata kunci, perihal..." class="w-full md:w-80 p-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm" />
                         </div>
                     </div>
 
@@ -75,7 +72,7 @@
                                     <th class="p-4 font-semibold border-b border-slate-200 whitespace-nowrap">Status Disposisi</th>
                                     <th class="p-4 rounded-tr-lg font-semibold border-b border-slate-200">Instruksi / Catatan</th>
                                 </tr>
-                            </table>
+                            </thead>
                             <tbody id="tabelMonitoring" class="text-sm divide-y divide-slate-100">
                                 <tr><td colspan="3" class="p-4 text-center text-slate-500">⏳ Mengambil data arsip...</td></tr>
                             </tbody>
@@ -90,8 +87,9 @@
 
     <script>
         // MASUKKAN URL DAN API KEY KAMU DI SINI
-        const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
+     const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // --- UPDATE FITUR KEAMANAN: Batasan Menu untuk Admin & Viewer ---
@@ -102,15 +100,18 @@
 
         // 2. Aturan Sembunyikan Menu
         if (peranPengguna === 'admin') {
+            // Admin hanya boleh Input & Monitoring. Sembunyikan Daftar Surat & Pengaturan.
             document.getElementById('menuDaftar').style.display = 'none';
             document.getElementById('menuPengaturan').style.display = 'none';
         } 
         else if (peranPengguna === 'viewer') {
+            // Viewer hanya boleh Monitoring. Sembunyikan Input, Daftar Surat, & Pengaturan.
             document.getElementById('menuInput').style.display = 'none';
             document.getElementById('menuDaftar').style.display = 'none';
             document.getElementById('menuPengaturan').style.display = 'none';
         }
-
+        // Jika superadmin, semua menu tetap tampil (tidak masuk kondisi if di atas)
+        // -----------------------------------------------------------------
         function keluarSistem() {
             localStorage.removeItem('hakAksesKelurahan');
             window.location.href = 'login.html';
@@ -129,6 +130,7 @@
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
+        // Fungsi bantuan untuk mendapatkan format YYYY-MM-DD dari tanggal
         function dapatkanStringTanggal(dateObj) {
             const y = dateObj.getFullYear();
             const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -165,43 +167,53 @@
                 // LOGIKA AGENDA 3 HARI KEDEPAN
                 // ----------------------------------------------------
                 const hariIni = new Date();
-                const strHariIni = dapatkanStringTanggal(hariIni);
+                const strHariIni = dapatkanStringTanggal(hariIni); // Cth: 2026-03-26
 
                 const tigaHariLagi = new Date();
                 tigaHariLagi.setDate(hariIni.getDate() + 3);
                 const strTigaHariLagi = dapatkanStringTanggal(tigaHariLagi);
 
+                // Filter surat undangan yang tanggal rapatnya masuk dalam rentang hari ini s/d 3 hari ke depan
                 let daftarAgenda = dataSurat.filter(surat => {
                     if (surat.jenis_surat !== 'undangan' || !surat.tgl_rapat) return false;
                     return surat.tgl_rapat >= strHariIni && surat.tgl_rapat <= strTigaHariLagi;
                 });
 
+                // Urutkan agenda berdasarkan tanggal yang paling dekat
                 daftarAgenda.sort((a, b) => a.tgl_rapat.localeCompare(b.tgl_rapat));
 
                 if (daftarAgenda.length === 0) {
                     wadahAgenda.innerHTML = `<p class="text-sm text-blue-600 col-span-3">✨ Tidak ada jadwal rapat untuk 3 hari ke depan.</p>`;
                 } else {
                     daftarAgenda.forEach(agenda => {
+                        // 1. Cari data disposisi khusus untuk agenda ini
                         const hasilDisposisi = dataDisposisi.filter(d => d.surat_id === agenda.id);
+                        
                         let statusDisp = '';
                         let infoDisposisi = '';
 
+                        // 2. Jika BELUM didisposisikan
                         if (hasilDisposisi.length === 0) {
                             statusDisp = `<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold">⏳ Belum disposisi</span>`;
                             infoDisposisi = `<p class="text-xs text-slate-400 italic mt-2 pt-2 border-t border-blue-100">Menunggu tindakan Lurah...</p>`;
-                        } else {
+                        } 
+                        // 3. Jika SUDAH didisposisikan
+                        else {
                             statusDisp = `<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">✅ Sudah disposisi</span>`;
+                            
+                            // Mengambil nama-nama pejabat dan menggabungkannya dengan koma
                             let daftarPejabat = hasilDisposisi.map(disp => namaPejabat[disp.pejabat_id] || 'Pejabat').join(', ');
-                            let BlackboxInstruksi = hasilDisposisi[0].isi_disposisi;
+                            let instruksi = hasilDisposisi[0].isi_disposisi;
 
                             infoDisposisi = `
                                 <div class="mt-2 pt-2 border-t border-blue-100 bg-blue-50/50 p-2 rounded">
                                     <p class="text-xs text-slate-700 mb-1"><span class="font-bold">Diteruskan ke:</span> <br>${daftarPejabat}</p>
-                                    <p class="text-xs text-slate-700"><span class="font-bold">Instruksi:</span> <br>"${BlackboxInstruksi}"</p>
+                                    <p class="text-xs text-slate-700"><span class="font-bold">Instruksi:</span> <br>"${instruksi}"</p>
                                 </div>
                             `;
                         }
 
+                        // 4. Cetak Kartu Agenda ke Layar
                         wadahAgenda.innerHTML += `
                             <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-200 hover:shadow-md transition flex flex-col justify-between">
                                 <div>
@@ -217,10 +229,10 @@
                         `;
                     });
                 }
+                // ----------------------------------------------------
 
-                // ----------------------------------------------------
-                // LOGIKA TABEL ARSIP (Ditambah class & data-tanggal)
-                // ----------------------------------------------------
+
+                // (Sisa logika tabel arsip tetap sama)
                 dataSurat.forEach((surat) => {
                     const hasilDisposisi = dataDisposisi.filter(disp => disp.surat_id === surat.id);
                     let statusHTML = '';
@@ -243,9 +255,8 @@
 
                     const tglMasukCantik = formatTanggalIndo(surat.tgl_masuk);
 
-                    // PERUBAHAN: Ditambahkan class="baris-monitoring" dan data-tanggal agar sistem filter berfungsi sempurna
                     const barisHTML = `
-                        <tr class="hover:bg-slate-50 transition align-top baris-monitoring" data-tanggal="${surat.tgl_masuk}">
+                        <tr class="hover:bg-slate-50 transition align-top">
                             <td class="p-4">
                                 <p class="font-bold text-slate-800">${surat.asal_surat}</p>
                                 <p class="text-slate-500 text-xs mb-1">${tglMasukCantik}</p>
@@ -259,59 +270,13 @@
                     wadahTabel.innerHTML += barisHTML;
                 });
 
-                // Jalankan fungsi filter pertama kali setelah seluruh baris selesai dimuat
-                saringTabel();
-
             } catch (err) {
                 wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
                 wadahAgenda.innerHTML = `<p class="text-sm text-red-500">Gagal memuat jadwal.</p>`;
             }
         }
 
-        // --- FUNGSI BARU: Logika Pencarian & Batasan Waktu 2 Bulan ---
-        function saringTabel() {
-            const inputPencarian = document.getElementById('inputPencarian');
-            if (!inputPencarian) return;
-            
-            const kataKunci = inputPencarian.value.toLowerCase();
-            const baris = document.querySelectorAll('#tabelMonitoring .baris-monitoring');
-
-            const hariIni = new Date();
-            const batasWaktu = new Date();
-            batasWaktu.setMonth(hariIni.getMonth() - 2); // Aturan default 2 bulan terakhir
-
-            baris.forEach(row => {
-                const teksBaris = row.textContent.toLowerCase();
-                const rawTanggal = row.getAttribute('data-tanggal');
-                const tanggalSurat = new Date(rawTanggal);
-
-                let masukRentang2Bulan = true;
-                if (!isNaN(tanggalSurat.getTime()) && tanggalSurat < batasWaktu) {
-                    masukRentang2Bulan = false;
-                }
-
-                const cocokPencarian = teksBaris.includes(kataKunci);
-
-                if (kataKunci === "") {
-                    // Default: Sembunyikan yang lebih dari 2 bulan jika kolom cari kosong
-                    row.style.display = masukRentang2Bulan ? "" : "none";
-                } else {
-                    // Mode Cari: Tampilkan seluruh arsip lama/baru yang cocok dengan kata pencarian
-                    row.style.display = cocokPencarian ? "" : "none";
-                }
-            });
-        }
-
-        // Jalankan seluruh fungsi saat window dimuat
-        window.onload = function() {
-            loadDataMonitoring();
-            
-            // Pasangkan event pencarian
-            const inputPencarian = document.getElementById('inputPencarian');
-            if (inputPencarian) {
-                inputPencarian.addEventListener('keyup', saringTabel);
-            }
-        };
+        window.onload = loadDataMonitoring;
     </script>
 </body>
 </html>
