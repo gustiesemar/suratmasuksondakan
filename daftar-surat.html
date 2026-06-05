@@ -140,8 +140,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script>
-      // 1. MASUKKAN URL DAN API KEY KAMU DI SINI
+   <script>
+      // 1. KONFIGURASI SUPABASE
       const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
@@ -154,7 +154,6 @@
       function formatTanggalIndo(tanggalString) {
         if (!tanggalString) return "-";
         const date = new Date(tanggalString);
-        // Pilihan format: menampilkan tanggal angka, bulan tulisan (long), tahun angka
         const options = { day: "numeric", month: "long", year: "numeric" };
         return date.toLocaleDateString("id-ID", options);
       }
@@ -204,11 +203,11 @@
               tombolMata = `<a href="disposisi.html?id=${surat.id}" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-md font-medium text-xs transition" title="Lakukan Disposisi">👁️ Disposisi</a>`;
             }
 
-            // Menerapkan formatTanggalIndo() pada surat.tgl_masuk
             const tanggalCantik = formatTanggalIndo(surat.tgl_masuk);
 
+            // PERUBAHAN: Menambahkan class 'baris-data' dan atribut 'data-tanggal' untuk keperluan filter
             const barisHTML = `
-                        <tr class="hover:bg-slate-50 transition">
+                        <tr class="hover:bg-slate-50 transition baris-data" data-tanggal="${surat.tgl_masuk}">
                             <td class="p-4 text-slate-700 font-medium whitespace-nowrap">${tanggalCantik}</td>
                             
                             <td class="p-4 font-medium text-slate-800">${surat.asal_surat}</td>
@@ -227,6 +226,10 @@
                     `;
             wadahTabel.innerHTML += barisHTML;
           });
+
+          // PENTING: Jalankan filter setelah tabel selesai diisi
+          saringTabel();
+
         } catch (err) {
           wadahTabel.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
         }
@@ -256,82 +259,55 @@
         }
       }
 
-      window.onload = loadDataSurat;
-      
-document.addEventListener("DOMContentLoaded", function() {
-    const inputPencarian = document.getElementById('inputPencarian');
-    
-    // GANTI 'tabelSurat' dengan ID tabel yang ada di file daftar-surat.html Anda
-    const tabel = document.getElementById('tabelSurat'); 
-    
-    // Pastikan tabel ditemukan sebelum menjalankan script
-    if (!tabel) return; 
-
-    const tbody = tabel.getElementsByTagName('tbody')[0];
-    const baris = tbody.getElementsByTagName('tr');
-
-    // Tentukan batas waktu: 2 bulan ke belakang dari hari ini
-    const hariIni = new Date();
-    const batasWaktu = new Date();
-    batasWaktu.setMonth(hariIni.getMonth() - 2);
-
-    function saringTabel() {
+      // --- FUNGSI PENYARINGAN DATA ---
+      function saringTabel() {
+        const inputPencarian = document.getElementById('inputPencarian');
         const kataKunci = inputPencarian.value.toLowerCase();
+        const baris = document.querySelectorAll('#tabelSurat .baris-data'); // Ambil hanya baris yang berisi data
 
-        for (let i = 0; i < baris.length; i++) {
-            const sel = baris[i].getElementsByTagName('td');
-            if (sel.length === 0) continue;
+        const hariIni = new Date();
+        const batasWaktu = new Date();
+        batasWaktu.setMonth(hariIni.getMonth() - 2);
 
-            // 1. Kumpulkan semua teks dari setiap kolom dalam baris (untuk pencarian kata bebas)
-            let teksBaris = "";
-            for (let j = 0; j < sel.length; j++) {
-                teksBaris += sel[j].textContent.toLowerCase() + " ";
-            }
-
-            // 2. Cek Tanggal Surat
-            // ASUMSI: Kolom tanggal berada di urutan pertama (indeks 0). 
-            // Jika tanggal ada di kolom ke-3, ubah sel[0] menjadi sel[2].
-            const teksTanggal = sel[0].textContent.trim(); 
+        baris.forEach(row => {
+            const teksBaris = row.textContent.toLowerCase();
             
-            // Mengubah format string menjadi format Date (Pastikan format tanggal di tabel bisa dibaca, misal: YYYY-MM-DD)
-            const tanggalSurat = new Date(teksTanggal); 
+            // Ambil tanggal asli dari atribut data-tanggal (Format bawaan database, lebih mudah dibaca sistem)
+            const rawTanggal = row.getAttribute('data-tanggal');
+            const tanggalSurat = new Date(rawTanggal);
+            
             let masukRentang2Bulan = true;
-            
-            // Validasi jika format tanggal valid
-            if (!isNaN(tanggalSurat.getTime())) {
-                // Jika tanggal surat lebih lama dari 2 bulan yang lalu
-                if (tanggalSurat < batasWaktu) {
-                    masukRentang2Bulan = false;
-                }
+            if (!isNaN(tanggalSurat.getTime()) && tanggalSurat < batasWaktu) {
+                masukRentang2Bulan = false;
             }
 
-            // 3. Logika Menampilkan Data
             const cocokPencarian = teksBaris.includes(kataKunci);
 
             if (kataKunci === "") {
-                // Tampilan DEFAULT (tanpa pencarian): Sembunyikan surat yang lebih lama dari 2 bulan
-                baris[i].style.display = masukRentang2Bulan ? "" : "none";
+                // Tampilan Default: Sembunyikan yang lebih tua dari 2 bulan
+                row.style.display = masukRentang2Bulan ? "" : "none";
             } else {
-                // Tampilan PENCARIAN: Munculkan semua baris yang cocok dengan kata kunci pejabat/perihal (mengabaikan filter 2 bulan agar hasil cari maksimal)
-                baris[i].style.display = cocokPencarian ? "" : "none";
+                // Tampilan Pencarian: Tampilkan semua yang cocok dengan kata kunci
+                row.style.display = cocokPencarian ? "" : "none";
             }
-        }
-    }
+        });
+      }
 
-    // Jalankan fungsi penyaringan saat halaman pertama kali dimuat (menerapkan aturan 2 bulan terakhir)
-    saringTabel();
+      // Jalankan loadDataSurat saat pertama kali dibuka
+      window.onload = function() {
+          loadDataSurat();
+          
+          // Pasang event listener ke input pencarian
+          const inputPencarian = document.getElementById('inputPencarian');
+          if(inputPencarian) {
+              inputPencarian.addEventListener('keyup', saringTabel);
+          }
+      };
 
-    // Dengarkan setiap ketikan di kolom pencarian lalu jalankan penyaringan kembali
-    inputPencarian.addEventListener('keyup', saringTabel);
-});
-
-    </script>
-    <script>
-        function keluarSistem() {
-            localStorage.removeItem('hakAksesKelurahan');
-            window.location.href = 'login.html';
-        }
-      
+      function keluarSistem() {
+          localStorage.removeItem('hakAksesKelurahan');
+          window.location.href = 'login.html';
+      }
     </script>
   </body>
 </html>
