@@ -88,7 +88,10 @@
                 Semua data surat yang telah masuk ke Kelurahan.
               </p>
             </div>
-                  </div>
+            <div style="margin-bottom: 15px;">
+               <input type="text" id="inputPencarian" placeholder="kata pencarian" style="padding: 8px; width: 100%; max-width: 400px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
+         </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -254,12 +257,81 @@
       }
 
       window.onload = loadDataSurat;
+      
+document.addEventListener("DOMContentLoaded", function() {
+    const inputPencarian = document.getElementById('inputPencarian');
+    
+    // GANTI 'tabelSurat' dengan ID tabel yang ada di file daftar-surat.html Anda
+    const tabel = document.getElementById('tabelSurat'); 
+    
+    // Pastikan tabel ditemukan sebelum menjalankan script
+    if (!tabel) return; 
+
+    const tbody = tabel.getElementsByTagName('tbody')[0];
+    const baris = tbody.getElementsByTagName('tr');
+
+    // Tentukan batas waktu: 2 bulan ke belakang dari hari ini
+    const hariIni = new Date();
+    const batasWaktu = new Date();
+    batasWaktu.setMonth(hariIni.getMonth() - 2);
+
+    function saringTabel() {
+        const kataKunci = inputPencarian.value.toLowerCase();
+
+        for (let i = 0; i < baris.length; i++) {
+            const sel = baris[i].getElementsByTagName('td');
+            if (sel.length === 0) continue;
+
+            // 1. Kumpulkan semua teks dari setiap kolom dalam baris (untuk pencarian kata bebas)
+            let teksBaris = "";
+            for (let j = 0; j < sel.length; j++) {
+                teksBaris += sel[j].textContent.toLowerCase() + " ";
+            }
+
+            // 2. Cek Tanggal Surat
+            // ASUMSI: Kolom tanggal berada di urutan pertama (indeks 0). 
+            // Jika tanggal ada di kolom ke-3, ubah sel[0] menjadi sel[2].
+            const teksTanggal = sel[0].textContent.trim(); 
+            
+            // Mengubah format string menjadi format Date (Pastikan format tanggal di tabel bisa dibaca, misal: YYYY-MM-DD)
+            const tanggalSurat = new Date(teksTanggal); 
+            let masukRentang2Bulan = true;
+            
+            // Validasi jika format tanggal valid
+            if (!isNaN(tanggalSurat.getTime())) {
+                // Jika tanggal surat lebih lama dari 2 bulan yang lalu
+                if (tanggalSurat < batasWaktu) {
+                    masukRentang2Bulan = false;
+                }
+            }
+
+            // 3. Logika Menampilkan Data
+            const cocokPencarian = teksBaris.includes(kataKunci);
+
+            if (kataKunci === "") {
+                // Tampilan DEFAULT (tanpa pencarian): Sembunyikan surat yang lebih lama dari 2 bulan
+                baris[i].style.display = masukRentang2Bulan ? "" : "none";
+            } else {
+                // Tampilan PENCARIAN: Munculkan semua baris yang cocok dengan kata kunci pejabat/perihal (mengabaikan filter 2 bulan agar hasil cari maksimal)
+                baris[i].style.display = cocokPencarian ? "" : "none";
+            }
+        }
+    }
+
+    // Jalankan fungsi penyaringan saat halaman pertama kali dimuat (menerapkan aturan 2 bulan terakhir)
+    saringTabel();
+
+    // Dengarkan setiap ketikan di kolom pencarian lalu jalankan penyaringan kembali
+    inputPencarian.addEventListener('keyup', saringTabel);
+});
+
     </script>
     <script>
         function keluarSistem() {
             localStorage.removeItem('hakAksesKelurahan');
             window.location.href = 'login.html';
         }
+      
     </script>
   </body>
 </html>
