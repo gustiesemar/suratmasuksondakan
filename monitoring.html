@@ -1,358 +1,205 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Disposisi - Sistem Kelurahan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Disposisi | E-DISON</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: Inter, sans-serif; }
+    .stat-card { background: linear-gradient(145deg, #fff, #f8fafc); }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
-
-   <nav class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
-        <div class="flex items-center gap-3">
-            <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-10 w-10 rounded-full border border-white/50 object-cover shadow-inner">
-            <div class="text-lg md:text-xl font-bold text-white">
-                E-DISON
-            </div>
-        </div>
-        
-        <div class="flex items-center gap-3">
-            <div class="text-xs md:text-sm bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full border border-indigo-400 hidden md:block">
-                👁️ Mode: Viewer / Monitoring
-            </div>
-            <button onclick="keluarSistem()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full font-bold shadow-md transition">
-                Keluar 🚪
-            </button>
-        </div>
-    </nav>
-    <div class="flex flex-1 flex-col md:flex-row">
-        
-        <aside class="w-full md:w-64 bg-white shadow-sm border-r border-slate-200 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
-            <a href="index.html" id="menuInput" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
-                📥 Input Surat Masuk
-            </a>
-            <a href="daftar-surat.html" id="menuDaftar" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition">
-                📂 Daftar Surat
-            </a>
-            <a href="#" class="bg-blue-50 text-blue-700 font-semibold p-3 rounded-lg block whitespace-nowrap border border-blue-100 transition">
-                📊 Monitoring Arsip
-            </a>
-            <a href="pengaturan.html" id="menuPengaturan" class="text-slate-600 hover:bg-slate-50 hover:text-blue-600 p-3 rounded-lg block whitespace-nowrap transition mt-4 border-t border-slate-200 pt-4">
-                ⚙️ Pengaturan Pejabat
-            </a>
-        </aside>
-
-        <main class="flex-1 p-4 md:p-8">
-            <div class="max-w-6xl mx-auto">
-                
-                <div class="bg-blue-50 border border-blue-200 p-5 rounded-xl shadow-sm mb-6">
-                    <h3 class="font-bold text-blue-800 mb-4 flex items-center gap-2 text-lg">
-                        <span>📅</span> Agenda Rapat (Hingga 3 Hari Kedepan)
-                    </h3>
-                    <div id="wadahAgenda" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <p class="text-sm text-blue-600 italic">⏳ Mengecek jadwal...</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200">
-                    
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 border-b pb-4 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-800 mb-1">Arsip & Monitoring Disposisi</h2>
-                            <p class="text-slate-500 text-sm">Pantau status tindak lanjut seluruh surat masuk.</p>
-                        </div>
-                        <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                            <select id="filterStatus" onchange="saringTabel()" class="p-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm cursor-pointer">
-                                <option value="semua">Semua Status</option>
-                                <option value="belum">⏳ Belum Diproses</option>
-                                <option value="sudah">✅ Sudah Disposisi</option>
-                            </select>
-
-                            <select id="filterWaktu" onchange="saringTabel()" class="p-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm cursor-pointer">
-                                <option value="2bulan">2 Bulan Terakhir</option>
-                                <option value="bulan_ini">Bulan Ini</option>
-                                <option value="bulan_lalu">Bulan Lalu</option>
-                                <option value="semua_waktu">Semua Waktu</option>
-                            </select>
-
-                            <input type="text" id="inputPencarian" onkeyup="saringTabel()" placeholder="Cari asal surat, perihal, atau catatan..." class="w-full sm:w-64 p-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm" />
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wide">
-                                    <th class="p-4 rounded-tl-lg font-semibold border-b border-slate-200 whitespace-nowrap">Surat Masuk</th>
-                                    <th class="p-4 font-semibold border-b border-slate-200 whitespace-nowrap">Status Disposisi</th>
-                                    <th class="p-4 rounded-tr-lg font-semibold border-b border-slate-200">Instruksi / Catatan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelMonitoring" class="text-sm divide-y divide-slate-100">
-                                <tr><td colspan="3" class="p-4 text-center text-slate-500">⏳ Mengambil data arsip...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+  <nav class="sticky top-0 z-30 border-b border-blue-400/20 bg-gradient-to-r from-blue-800 to-blue-600 text-white shadow-lg">
+    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="monitoring.html" class="flex items-center gap-3" aria-label="E-DISON, beranda monitoring">
+        <img src="logo_kelurahan.png" alt="Logo Kelurahan Sondakan" class="h-10 w-10 rounded-full border border-white/50 object-cover shadow-inner">
+        <div><p class="text-lg font-extrabold tracking-tight">E-DISON</p><p class="text-[11px] text-blue-100">Kelurahan Sondakan</p></div>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <span class="hidden rounded-full border border-blue-300/40 bg-white/10 px-3 py-1.5 text-xs font-semibold sm:inline">👁️ Viewer / Monitoring</span>
+        <button type="button" onclick="keluarSistem()" class="rounded-lg bg-white/15 px-3 py-2 text-xs font-bold transition hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white">Keluar <span aria-hidden="true">↗</span></button>
+      </div>
     </div>
+  </nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <div class="mx-auto flex min-h-[calc(100vh-65px)] max-w-screen-2xl flex-col md:flex-row">
+    <aside class="border-b border-slate-200 bg-white p-3 md:w-64 md:border-b-0 md:border-r md:p-4">
+      <p class="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-slate-400">Menu</p>
+      <nav class="flex gap-2 overflow-x-auto md:flex-col" aria-label="Navigasi utama">
+        <a href="index.html" id="menuInput" class="whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-700">📥 Input Surat Masuk</a>
+        <a href="daftar-surat.html" id="menuDaftar" class="whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-700">📁 Daftar Surat</a>
+        <a href="monitoring.html" class="whitespace-nowrap rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-bold text-blue-700 ring-1 ring-blue-100">📊 Monitoring Arsip</a>
+        <a href="pengaturan.html" id="menuPengaturan" class="whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-700">⚙️ Pengaturan Pejabat</a>
+      </nav>
+    </aside>
 
-    <script>
-        const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <main class="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+      <div class="mx-auto max-w-7xl">
+        <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="mb-1 text-sm font-semibold text-blue-700">Pusat kendali surat masuk</p>
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Arsip & Monitoring Disposisi</h1>
+            <p class="mt-2 max-w-2xl text-sm text-slate-500">Pantau surat yang membutuhkan tindakan dan tindak lanjutnya dalam satu tampilan.</p>
+          </div>
+          <button type="button" onclick="unduhCSV()" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">⇩ Unduh hasil CSV</button>
+        </header>
 
-        const peranPengguna = localStorage.getItem('hakAksesKelurahan');
-        if (!peranPengguna) { window.location.href = 'login.html'; }
+        <section class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Ringkasan surat">
+          <article class="stat-card rounded-2xl border border-slate-200 p-4 shadow-sm"><p class="text-xs font-bold uppercase tracking-wide text-slate-500">Total surat</p><p id="totalSurat" class="mt-2 text-3xl font-extrabold text-slate-900">—</p><p class="mt-1 text-xs text-slate-500">Dalam arsip</p></article>
+          <article class="stat-card rounded-2xl border border-amber-100 p-4 shadow-sm"><p class="text-xs font-bold uppercase tracking-wide text-amber-700">Perlu disposisi</p><p id="totalBelum" class="mt-2 text-3xl font-extrabold text-amber-600">—</p><p class="mt-1 text-xs text-slate-500">Belum ditindak</p></article>
+          <article class="stat-card rounded-2xl border border-emerald-100 p-4 shadow-sm"><p class="text-xs font-bold uppercase tracking-wide text-emerald-700">Sudah disposisi</p><p id="totalSudah" class="mt-2 text-3xl font-extrabold text-emerald-600">—</p><p class="mt-1 text-xs text-slate-500">Sudah diteruskan</p></article>
+          <article class="stat-card rounded-2xl border border-rose-100 p-4 shadow-sm"><p class="text-xs font-bold uppercase tracking-wide text-rose-700">Agenda dekat</p><p id="totalAgenda" class="mt-2 text-3xl font-extrabold text-rose-600">—</p><p class="mt-1 text-xs text-slate-500">3 hari ke depan</p></article>
+        </section>
 
-        if (peranPengguna === 'admin') {
-            document.getElementById('menuDaftar').style.display = 'none';
-            document.getElementById('menuPengaturan').style.display = 'none';
-        } 
-        else if (peranPengguna === 'viewer') {
-            document.getElementById('menuInput').style.display = 'none';
-            document.getElementById('menuDaftar').style.display = 'none';
-            document.getElementById('menuPengaturan').style.display = 'none';
-        }
+        <section class="mb-6 overflow-hidden rounded-2xl border border-blue-100 bg-blue-50/60 shadow-sm" aria-labelledby="agendaTitle">
+          <div class="flex items-center justify-between gap-4 border-b border-blue-100 bg-white/60 px-5 py-4">
+            <div><h2 id="agendaTitle" class="font-bold text-slate-900">📅 Agenda terdekat</h2><p class="mt-0.5 text-xs text-slate-500">Undangan rapat dalam 3 hari ke depan</p></div>
+            <button id="tombolAgenda" type="button" onclick="toggleAgenda()" class="hidden text-sm font-bold text-blue-700 hover:underline">Lihat semua</button>
+          </div>
+          <div id="wadahAgenda" class="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-3"><p class="text-sm text-blue-700">Memuat agenda…</p></div>
+        </section>
 
-        function keluarSistem() {
-            localStorage.removeItem('hakAksesKelurahan');
-            window.location.href = 'login.html';
-        }
+        <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="arsipTitle">
+          <div class="border-b border-slate-100 p-5 sm:p-6">
+            <div class="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+              <div><h2 id="arsipTitle" class="text-xl font-extrabold text-slate-900">Daftar surat</h2><p id="jumlahHasil" class="mt-1 text-sm text-slate-500" aria-live="polite">Memuat data…</p></div>
+              <div class="grid w-full gap-2 sm:grid-cols-2 lg:w-auto lg:grid-cols-4">
+                <select id="filterStatus" onchange="saringTabel()" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"><option value="semua">Semua status</option><option value="belum">Belum diproses</option><option value="sudah">Sudah disposisi</option></select>
+                <select id="filterWaktu" onchange="saringTabel()" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"><option value="2bulan">2 bulan terakhir</option><option value="bulan_ini">Bulan ini</option><option value="bulan_lalu">Bulan lalu</option><option value="semua_waktu">Semua waktu</option></select>
+                <select id="filterTujuan" onchange="saringTabel()" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"><option value="semua">Semua tujuan</option></select>
+                <input type="search" id="inputPencarian" oninput="saringTabel()" placeholder="Cari surat atau instruksi…" class="min-w-0 rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+              </div>
+            </div>
+            <button type="button" onclick="resetFilter()" class="mt-3 text-sm font-semibold text-slate-500 hover:text-blue-700">↺ Reset filter</button>
+          </div>
 
-        const namaPejabat = {
-            "2": "Sekretaris Kelurahan",
-            "3": "Kasi P3K2",
-            "4": "Kasi Pembangunan",
-            "5": "Kasi Pemberdayaan Masyarakat"
-        };
+          <div id="kartuSurat" class="space-y-3 p-4 md:hidden"></div>
+          <div class="hidden overflow-x-auto md:block">
+            <table class="w-full min-w-[760px] text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-bold uppercase tracking-wide text-slate-500"><tr><th class="px-6 py-4">Surat masuk</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Instruksi / catatan</th></tr></thead>
+              <tbody id="tabelMonitoring" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
-        function formatTanggalIndo(tanggalString) {
-            if (!tanggalString) return '-';
-            const date = new Date(tanggalString);
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://gfxqowoohdccbwfubbwn.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmeHFvd29vaGRjY2J3ZnViYnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MDc2OTgsImV4cCI6MjA4OTk4MzY5OH0.kkVVDqkSVr6mhoz5oIhObFpbsGILtfwL2Jkv0pcW1ow";
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const peranPengguna = localStorage.getItem('hakAksesKelurahan');
+    const namaPejabat = { '2': 'Sekretaris Kelurahan', '3': 'Kasi P3K2', '4': 'Kasi Pembangunan', '5': 'Kasi Pemberdayaan Masyarakat' };
+    let semuaSurat = [];
+    let semuaDisposisi = [];
+    let hasilTersaring = [];
+    let agendaDitampilkanSemua = false;
 
-        function dapatkanStringTanggal(dateObj) {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
+    if (!peranPengguna) window.location.href = 'login.html';
+    if (peranPengguna === 'admin') { document.getElementById('menuDaftar').hidden = true; document.getElementById('menuPengaturan').hidden = true; }
+    if (peranPengguna === 'viewer') { document.getElementById('menuInput').hidden = true; document.getElementById('menuDaftar').hidden = true; document.getElementById('menuPengaturan').hidden = true; }
 
-        async function loadDataMonitoring() {
-            const wadahTabel = document.getElementById('tabelMonitoring');
-            const wadahAgenda = document.getElementById('wadahAgenda');
+    function keluarSistem() { localStorage.removeItem('hakAksesKelurahan'); window.location.href = 'login.html'; }
+    function aman(nilai) { const div = document.createElement('div'); div.textContent = nilai ?? ''; return div.innerHTML; }
+    function formatTanggalIndo(tanggal) { if (!tanggal) return 'Tanggal belum diisi'; const [tahun, bulan, hari] = tanggal.split('-').map(Number); return new Date(tahun, bulan - 1, hari).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
+    function tanggalLokal(tanggal) { if (!tanggal || !/^\d{4}-\d{2}-\d{2}$/.test(tanggal)) return null; const [tahun, bulan, hari] = tanggal.split('-').map(Number); return new Date(tahun, bulan - 1, hari); }
+    function hariMulai(date = new Date()) { return new Date(date.getFullYear(), date.getMonth(), date.getDate()); }
+    function disposisiSurat(id) { return semuaDisposisi.filter(item => String(item.surat_id) === String(id)); }
+    function namaTujuan(surat) { return disposisiSurat(surat.id).map(item => namaPejabat[String(item.pejabat_id)] || 'Pejabat').filter((nama, index, list) => list.indexOf(nama) === index); }
+    function agendaDekat(surat) { const tgl = tanggalLokal(surat.tgl_rapat); const mulai = hariMulai(); const batas = new Date(mulai); batas.setDate(batas.getDate() + 3); return surat.jenis_surat === 'undangan' && tgl && tgl >= mulai && tgl <= batas; }
+    function perluTindakan(surat) { return agendaDekat(surat) && disposisiSurat(surat.id).length === 0; }
+    function badgeStatus(surat) { if (disposisiSurat(surat.id).length) return '<span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">✓ Sudah disposisi</span>'; return '<span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-inset ring-amber-200">◷ Perlu disposisi</span>'; }
 
-            try {
-                const { data: dataSurat, error: errSurat } = await supabaseClient
-                    .from('surat')
-                    .select('*')
-                    .order('id', { ascending: false });
-                if (errSurat) throw errSurat;
+    function renderRingkasan() {
+      const sudah = semuaSurat.filter(surat => disposisiSurat(surat.id).length).length;
+      document.getElementById('totalSurat').textContent = semuaSurat.length;
+      document.getElementById('totalBelum').textContent = semuaSurat.length - sudah;
+      document.getElementById('totalSudah').textContent = sudah;
+      document.getElementById('totalAgenda').textContent = semuaSurat.filter(agendaDekat).length;
+    }
 
-                const { data: dataDisposisi, error: errDisp } = await supabaseClient
-                    .from('disposisi')
-                    .select('*');
-                if (errDisp) throw errDisp;
+    function renderPilihanTujuan() {
+      const pilihan = [...new Set(semuaSurat.flatMap(namaTujuan))].sort((a, b) => a.localeCompare(b, 'id'));
+      document.getElementById('filterTujuan').innerHTML = '<option value="semua">Semua tujuan</option>' + pilihan.map(nama => `<option value="${aman(nama)}">${aman(nama)}</option>`).join('');
+    }
 
-                wadahTabel.innerHTML = '';
-                wadahAgenda.innerHTML = '';
+    function renderAgenda() {
+      const wadah = document.getElementById('wadahAgenda');
+      const tombol = document.getElementById('tombolAgenda');
+      const agenda = semuaSurat.filter(agendaDekat).sort((a, b) => `${a.tgl_rapat}${a.jam_rapat || ''}`.localeCompare(`${b.tgl_rapat}${b.jam_rapat || ''}`));
+      const ditampilkan = agendaDitampilkanSemua ? agenda : agenda.slice(0, 3);
+      tombol.classList.toggle('hidden', agenda.length <= 3);
+      tombol.textContent = agendaDitampilkanSemua ? 'Tampilkan lebih sedikit' : `Lihat ${agenda.length - 3} agenda lagi`;
+      if (!agenda.length) { wadah.innerHTML = '<p class="rounded-xl border border-dashed border-blue-200 bg-white/70 p-4 text-sm text-slate-500 md:col-span-2 xl:col-span-3">Tidak ada undangan rapat dalam 3 hari ke depan.</p>'; return; }
+      wadah.innerHTML = ditampilkan.map(surat => {
+        const tujuan = namaTujuan(surat);
+        const instruksi = disposisiSurat(surat.id)[0]?.isi_disposisi;
+        return `<article class="flex flex-col justify-between rounded-xl border ${perluTindakan(surat) ? 'border-amber-200 bg-amber-50/60' : 'border-slate-200 bg-white'} p-4 shadow-sm">
+          <div><div class="flex items-start justify-between gap-2"><p class="text-xs font-bold text-blue-700">${aman(formatTanggalIndo(surat.tgl_rapat))} · ${aman(surat.jam_rapat || 'Jam belum diisi')}</p>${badgeStatus(surat)}</div><h3 class="mt-3 font-bold leading-snug text-slate-800">${aman(surat.perihal || 'Tanpa perihal')}</h3><p class="mt-2 text-xs text-slate-500">📍 ${aman(surat.tempat_rapat || 'Tempat belum diisi')}</p></div>
+          <div class="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-600">${tujuan.length ? `<p><span class="font-bold">Diteruskan ke:</span> ${aman(tujuan.join(', '))}</p><p class="mt-1 line-clamp-2"><span class="font-bold">Instruksi:</span> ${aman(instruksi || '-')}</p>` : '<p class="font-semibold text-amber-700">Butuh disposisi sebelum agenda berlangsung.</p>'}</div>
+        </article>`;
+      }).join('');
+    }
 
-                if (dataSurat.length === 0) {
-                    wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500">Belum ada data surat.</td></tr>`;
-                    wadahAgenda.innerHTML = `<p class="text-sm text-slate-500">Belum ada jadwal rapat.</p>`;
-                    return;
-                }
+    function sesuaiWaktu(surat, pilihan) {
+      if (pilihan === 'semua_waktu') return true;
+      const tanggal = tanggalLokal(surat.tgl_masuk); if (!tanggal) return false;
+      const sekarang = hariMulai();
+      if (pilihan === '2bulan') { const batas = new Date(sekarang); batas.setMonth(batas.getMonth() - 2); return tanggal >= batas; }
+      if (pilihan === 'bulan_ini') return tanggal.getFullYear() === sekarang.getFullYear() && tanggal.getMonth() === sekarang.getMonth();
+      const bulanLalu = new Date(sekarang.getFullYear(), sekarang.getMonth() - 1, 1); return tanggal.getFullYear() === bulanLalu.getFullYear() && tanggal.getMonth() === bulanLalu.getMonth();
+    }
 
-                // --- LOGIKA AGENDA 3 HARI KEDEPAN ---
-                const hariIni = new Date();
-                const strHariIni = dapatkanStringTanggal(hariIni);
+    function saringTabel() {
+      const kataKunci = document.getElementById('inputPencarian').value.trim().toLocaleLowerCase('id');
+      const status = document.getElementById('filterStatus').value;
+      const waktu = document.getElementById('filterWaktu').value;
+      const tujuan = document.getElementById('filterTujuan').value;
+      hasilTersaring = semuaSurat.filter(surat => {
+        const punyaDisposisi = disposisiSurat(surat.id).length > 0;
+        const isi = [surat.asal_surat, surat.perihal, surat.jenis_surat, ...namaTujuan(surat), ...disposisiSurat(surat.id).map(item => item.isi_disposisi)].join(' ').toLocaleLowerCase('id');
+        return isi.includes(kataKunci) && (status === 'semua' || (status === 'sudah') === punyaDisposisi) && sesuaiWaktu(surat, waktu) && (tujuan === 'semua' || namaTujuan(surat).includes(tujuan));
+      });
+      renderSurat();
+    }
 
-                const tigaHariLagi = new Date();
-                tigaHariLagi.setDate(hariIni.getDate() + 3);
-                const strTigaHariLagi = dapatkanStringTanggal(tigaHariLagi);
+    function isiInstruksi(surat) { const disposisi = disposisiSurat(surat.id); if (!disposisi.length) return '<span class="italic text-slate-400">Menunggu tindakan Lurah.</span>'; return `<p class="font-medium leading-relaxed text-slate-700">${aman(disposisi[0].isi_disposisi || 'Belum ada instruksi tertulis.')}</p>`; }
+    function informasiSurat(surat) { const tujuan = namaTujuan(surat); const dokumen = surat.link_gdrive ? `<a href="${aman(surat.link_gdrive)}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex text-xs font-bold text-blue-700 hover:underline">Buka dokumen ↗</a>` : ''; return `<p class="font-bold text-slate-900">${aman(surat.asal_surat || 'Asal surat belum diisi')}</p><p class="mt-1 text-xs text-slate-500">${aman(formatTanggalIndo(surat.tgl_masuk))}</p><p class="mt-2 leading-relaxed text-slate-700">${aman(surat.perihal || 'Tanpa perihal')}</p>${perluTindakan(surat) ? '<span class="mt-2 inline-flex rounded-full bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700">! Agenda dekat — perlu tindakan</span>' : ''}${dokumen}`; }
+    function renderSurat() {
+      const tabel = document.getElementById('tabelMonitoring'); const kartu = document.getElementById('kartuSurat'); const jumlah = document.getElementById('jumlahHasil');
+      jumlah.textContent = `${hasilTersaring.length} dari ${semuaSurat.length} surat ditampilkan`;
+      if (!hasilTersaring.length) { const kosong = '<div class="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500">Tidak ada surat yang cocok dengan filter. Coba ubah kata kunci atau reset filter.</div>'; tabel.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-500">Tidak ada surat yang cocok dengan filter.</td></tr>'; kartu.innerHTML = kosong; return; }
+      tabel.innerHTML = hasilTersaring.map(surat => `<tr class="align-top transition hover:bg-slate-50"><td class="px-6 py-5">${informasiSurat(surat)}</td><td class="px-6 py-5">${badgeStatus(surat)}${namaTujuan(surat).length ? `<p class="mt-3 text-xs font-medium leading-relaxed text-slate-600">${aman(namaTujuan(surat).join(', '))}</p>` : ''}</td><td class="px-6 py-5">${isiInstruksi(surat)}</td></tr>`).join('');
+      kartu.innerHTML = hasilTersaring.map(surat => `<article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><div class="flex items-start justify-between gap-3"><div class="min-w-0">${informasiSurat(surat)}</div>${badgeStatus(surat)}</div><div class="mt-4 border-t border-slate-100 pt-3"><p class="text-xs font-bold uppercase tracking-wide text-slate-400">${namaTujuan(surat).length ? 'Diteruskan ke' : 'Status'}</p><p class="mt-1 text-sm text-slate-700">${namaTujuan(surat).length ? aman(namaTujuan(surat).join(', ')) : 'Menunggu tindakan Lurah.'}</p><div class="mt-3 rounded-lg bg-slate-50 p-3">${isiInstruksi(surat)}</div></div></article>`).join('');
+    }
 
-                let daftarAgenda = dataSurat.filter(surat => {
-                    if (surat.jenis_surat !== 'undangan' || !surat.tgl_rapat) return false;
-                    return surat.tgl_rapat >= strHariIni && surat.tgl_rapat <= strTigaHariLagi;
-                });
+    function resetFilter() { document.getElementById('filterStatus').value = 'semua'; document.getElementById('filterWaktu').value = '2bulan'; document.getElementById('filterTujuan').value = 'semua'; document.getElementById('inputPencarian').value = ''; saringTabel(); }
+    function toggleAgenda() { agendaDitampilkanSemua = !agendaDitampilkanSemua; renderAgenda(); }
+    function csv(nilai) { const teks = String(nilai ?? '').replaceAll('"', '""'); return `"${teks}"`; }
+    function unduhCSV() { const baris = [['Tanggal masuk', 'Asal surat', 'Perihal', 'Status', 'Diteruskan ke', 'Instruksi', 'Tautan dokumen'], ...hasilTersaring.map(surat => [surat.tgl_masuk, surat.asal_surat, surat.perihal, disposisiSurat(surat.id).length ? 'Sudah disposisi' : 'Perlu disposisi', namaTujuan(surat).join(', '), disposisiSurat(surat.id)[0]?.isi_disposisi || '', surat.link_gdrive || ''])]; const blob = new Blob(['\ufeff' + baris.map(barisCSV => barisCSV.map(csv).join(',')).join('\n')], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `monitoring-surat-${new Date().toISOString().slice(0, 10)}.csv`; link.click(); URL.revokeObjectURL(link.href); }
 
-                daftarAgenda.sort((a, b) => a.tgl_rapat.localeCompare(b.tgl_rapat));
-
-                if (daftarAgenda.length === 0) {
-                    wadahAgenda.innerHTML = `<p class="text-sm text-blue-600 col-span-3">✨ Tidak ada jadwal rapat untuk 3 hari ke depan.</p>`;
-                } else {
-                    daftarAgenda.forEach(agenda => {
-                        const hasilDisposisi = dataDisposisi.filter(d => d.surat_id === agenda.id);
-                        let statusDisp = '';
-                        let infoDisposisi = '';
-
-                        if (hasilDisposisi.length === 0) {
-                            statusDisp = `<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold">⏳ Belum disposisi</span>`;
-                            infoDisposisi = `<p class="text-xs text-slate-400 italic mt-2 pt-2 border-t border-blue-100">Menunggu tindakan Lurah...</p>`;
-                        } else {
-                            statusDisp = `<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">✅ Sudah disposisi</span>`;
-                            let daftarPejabat = hasilDisposisi.map(disp => namaPejabat[disp.pejabat_id] || 'Pejabat').join(', ');
-                            let BlackboxInstruksi = hasilDisposisi[0].isi_disposisi;
-
-                            infoDisposisi = `
-                                <div class="mt-2 pt-2 border-t border-blue-100 bg-blue-50/50 p-2 rounded">
-                                    <p class="text-xs text-slate-700 mb-1"><span class="font-bold">Diteruskan ke:</span> <br>${daftarPejabat}</p>
-                                    <p class="text-xs text-slate-700"><span class="font-bold">Instruksi:</span> <br>"${BlackboxInstruksi}"</p>
-                                </div>
-                            `;
-                        }
-
-                        wadahAgenda.innerHTML += `
-                            <div class="bg-white p-4 rounded-lg shadow-sm border border-blue-200 hover:shadow-md transition flex flex-col justify-between">
-                                <div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <p class="text-xs font-bold text-blue-600">${formatTanggalIndo(agenda.tgl_rapat)} • ${agenda.jam_rapat || '-'}</p>
-                                        ${statusDisp}
-                                    </div>
-                                    <p class="font-bold text-slate-800 text-sm mb-1 leading-tight line-clamp-2" title="${agenda.perihal}">${agenda.perihal}</p>
-                                    <p class="text-xs text-slate-500 mb-2">📍 ${agenda.tempat_rapat || 'Tempat tidak dirinci'}</p>
-                                </div>
-                                ${infoDisposisi}
-                            </div>
-                        `;
-                    });
-                }
-
-                // --- LOGIKA TABEL ARSIP ---
-                dataSurat.forEach((surat) => {
-                    const hasilDisposisi = dataDisposisi.filter(disp => disp.surat_id === surat.id);
-                    let statusHTML = '';
-                    let instruksiHTML = '';
-                    let statusKlasifikasi = 'belum';
-
-                    if (hasilDisposisi.length === 0) {
-                        statusHTML = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">⏳ Belum Diproses</span>`;
-                        instruksiHTML = `<span class="text-slate-400 italic">Menunggu tindakan Lurah...</span>`;
-                        statusKlasifikasi = 'belum';
-                    } else {
-                        statusHTML = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 mb-2 inline-block">✅ Sudah Disposisi</span>`;
-                        let daftarPejabat = hasilDisposisi.map(disp => `<li>• ${namaPejabat[disp.pejabat_id] || 'Pejabat'}</li>`).join('');
-                        statusHTML += `<ul class="text-slate-600 mt-1">${daftarPejabat}</ul>`;
-                        instruksiHTML = `<p class="text-slate-700 font-medium">"${hasilDisposisi[0].isi_disposisi}"</p>`;
-                        statusKlasifikasi = 'sudah';
-                    }
-
-                    let linkFile = '';
-                    if (surat.link_gdrive) {
-                        linkFile = `<br><a href="${surat.link_gdrive}" target="_blank" class="text-blue-600 hover:underline text-xs mt-1 inline-block font-semibold">📄 Lihat Surat</a>`;
-                    }
-
-                    const tglMasukCantik = formatTanggalIndo(surat.tgl_masuk);
-
-                    const barisHTML = `
-                        <tr class="hover:bg-slate-50 transition align-top baris-monitoring" data-tanggal="${surat.tgl_masuk}" data-status="${statusKlasifikasi}">
-                            <td class="p-4">
-                                <p class="font-bold text-slate-800">${surat.asal_surat}</p>
-                                <p class="text-slate-500 text-xs mb-1">${tglMasukCantik}</p>
-                                <p class="text-slate-600 text-sm mt-2">${surat.perihal}</p>
-                                ${linkFile}
-                            </td>
-                            <td class="p-4 whitespace-nowrap">${statusHTML}</td>
-                            <td class="p-4 bg-slate-50/50">${instruksiHTML}</td>
-                        </tr>
-                    `;
-                    wadahTabel.innerHTML += barisHTML;
-                });
-
-                saringTabel();
-
-            } catch (err) {
-                wadahTabel.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-bold">Gagal memuat data.</td></tr>`;
-                wadahAgenda.innerHTML = `<p class="text-sm text-red-500">Gagal memuat jadwal.</p>`;
-            }
-        }
-
-        // --- PERUBAHAN BESAR: Rekonstruksi Total Fungsi Filter Waktu & Bulan ---
-        function saringTabel() {
-            const inputPencarian = document.getElementById('inputPencarian');
-            const filterStatus = document.getElementById('filterStatus');
-            const filterWaktu = document.getElementById('filterWaktu');
-            
-            if (!inputPencarian || !filterStatus || !filterWaktu) return;
-            
-            const kataKunci = inputPencarian.value.toLowerCase().trim();
-            const statusDipilih = filterStatus.value;
-            const rentangWaktuDipilih = filterWaktu.value;
-            
-            const baris = document.querySelectorAll('#tabelMonitoring .baris-monitoring');
-
-            const hariIni = new Date();
-            const tahunIni = hariIni.getFullYear();
-            const bulanIni = hariIni.getMonth(); // Indeks 0-11
-
-            baris.forEach(row => {
-                const teksBaris = row.textContent.toLowerCase();
-                const statusBaris = row.getAttribute('data-status');
-                const rawTanggal = row.getAttribute('data-tanggal'); // Format: YYYY-MM-DD
-                
-                // Parsing Tanggal secara Aman (Cross-Browser Safe) Menggunakan Metode Split String
-                let tanggalSurat = null;
-                let thnSurat = 0, blnSurat = 0, tglSurat = 0;
-                
-                if (rawTanggal && rawTanggal.includes('-')) {
-                    const pecahan = rawTanggal.split('-');
-                    thnSurat = parseInt(pecahan[0], 10);
-                    blnSurat = parseInt(pecahan[1], 10) - 1; // Konversi ke indeks bulan JS (0-11)
-                    tglSurat = parseInt(pecahan[2], 10);
-                    tanggalSurat = new Date(thnSurat, blnSurat, tglSurat);
-                }
-
-                // 1. Validasi Kecocokan Kata Kunci
-                const cocokKataKunci = teksBaris.includes(kataKunci);
-
-                // 2. Validasi Kecocokan Status Disposisi
-                const cocokStatus = (statusDipilih === 'semua') || (statusBaris === statusDipilih);
-
-                // 3. Validasi Kecocokan Waktu / Bulan
-                let cocokWaktu = true;
-                
-                if (tanggalSurat && !isNaN(tanggalSurat.getTime())) {
-                    if (rentangWaktuDipilih === '2bulan') {
-                        const batasWaktu = new Date();
-                        batasWaktu.setMonth(hariIni.getMonth() - 2);
-                        if (tanggalSurat < batasWaktu) cocokWaktu = false;
-                    } 
-                    else if (rentangWaktuDipilih === 'bulan_ini') {
-                        if (thnSurat !== tahunIni || blnSurat !== bulanIni) cocokWaktu = false;
-                    } 
-                    else if (rentangWaktuDipilih === 'bulan_lalu') {
-                        let targetBulan = bulanIni - 1;
-                        let targetTahun = tahunIni;
-                        if (targetBulan < 0) {
-                            targetBulan = 11;
-                            targetTahun -= 1;
-                        }
-                        if (thnSurat !== targetTahun || blnSurat !== targetBulan) cocokWaktu = false;
-                    }
-                } else if (rentangWaktuDipilih !== 'semua_waktu') {
-                    // Jika tanggal di database kosong/cacat, sembunyikan dari filter waktu terikat
-                    cocokWaktu = false;
-                }
-
-                // Eksekusi Tampilkan atau Sembunyikan Baris secara Mutlak (Gerbang Logika AND)
-                if (cocokKataKunci && cocokStatus && cocokWaktu) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        }
-
-        window.onload = function() {
-            loadDataMonitoring();
-        };
-    </script>
+    async function loadDataMonitoring() {
+      try {
+        const [{ data: surat, error: errSurat }, { data: disposisi, error: errDisposisi }] = await Promise.all([supabaseClient.from('surat').select('*').order('id', { ascending: false }), supabaseClient.from('disposisi').select('*')]);
+        if (errSurat) throw errSurat; if (errDisposisi) throw errDisposisi;
+        semuaSurat = surat || []; semuaDisposisi = disposisi || [];
+        renderRingkasan(); renderPilihanTujuan(); renderAgenda(); saringTabel();
+      } catch (error) {
+        document.getElementById('wadahAgenda').innerHTML = '<p class="text-sm text-red-600">Agenda tidak dapat dimuat. Coba muat ulang halaman.</p>';
+        document.getElementById('tabelMonitoring').innerHTML = '<tr><td colspan="3" class="p-6 text-center font-medium text-red-600">Data surat tidak dapat dimuat. Periksa koneksi lalu coba lagi.</td></tr>';
+        document.getElementById('kartuSurat').innerHTML = '<p class="p-4 text-center text-sm text-red-600">Data surat tidak dapat dimuat.</p>';
+        document.getElementById('jumlahHasil').textContent = 'Data tidak dapat dimuat';
+        console.error('Gagal memuat monitoring:', error);
+      }
+    }
+    window.addEventListener('load', loadDataMonitoring);
+  </script>
 </body>
 </html>
