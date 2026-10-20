@@ -162,10 +162,15 @@
       async function loadDataSurat() {
         const wadahTabel = document.getElementById("tabelSurat");
         try {
+          // const { data: dataSurat, error: errSurat } = await supabaseClient
+          //   .from("surat")
+          //   .select("*")
+          //   .order("id", { ascending: false });
           const { data: dataSurat, error: errSurat } = await supabaseClient
-            .from("surat")
-            .select("*")
-            .order("id", { ascending: false });
+  .from("surat")
+  .select("*")
+  .order("id", { ascending: false })
+  .range(0, 49); // Ambil 50 data pertama
 
           if (errSurat) throw errSurat;
 
